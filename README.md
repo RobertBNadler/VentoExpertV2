@@ -1,28 +1,20 @@
-# HACS (Home Assistant Community Store)
+# VentoExpertV2 (Blauberg Vento Expert V2 series fan)
 
-_Manage (Install, track, upgrade) and discover custom elements for Home Assistant directly from the UI._
+_Observe and Control your Blauberg Fan directly from Home Assistant._
 
 ## What?
 
-HACS is an integration that gives the user a powerful UI to handle downloads of custom needs.
+VentoExpertV2 is an integration that gives the user a powerful UI to observe and control the Blauberg Vento Expert V2 series fan.
 
-**Highlights of what HACS can do:**
+**Highlights of what VentoExpertV2 can do:**
 
-- Help you discover new custom elements.
-- Help you download new custom elements.
-- Help you keep track of your custom elements.
-  - Manage(download/update/remove)
-  - Shortcuts to repositories/issue tracker
+- Help you observe the status of the fan.
+- Help you to take controll of the fan.
 
 ## Useful links
 
 - [General documentation](https://hacs.xyz/)
-- [Configuration](https://hacs.xyz/docs/use/configuration/basic)
-- [FAQ](https://hacs.xyz/docs/faq)
-- [GitHub](https://github.com/hacs)
-- [Discord](https://discord.gg/apgchf8)
-- [Become a GitHub sponsor? ❤️](https://github.com/sponsors/ludeeus)
-- [BuyMe~~Coffee~~Beer? 🍺🙈](https://buymeacoffee.com/ludeeus)
+
 
 
 ## Issues
