@@ -224,8 +224,8 @@ class VentoExpertBoostSensor(VentoExpertBaseSensor):
     _attr_icon = "mdi:rocket-launch"
 
     def _format_value(self, raw):
-        mapping = {0: "Aus", 1: "Ein"}
-        return mapping.get(raw, "Unbekannt")
+        mapping = {0: "Aus", 1: "Ein", 2: "Nachlauf"}
+        return str(mapping.get(raw, raw))
 
 
 # ---------------------------------------------------------
