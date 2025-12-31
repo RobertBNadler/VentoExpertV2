@@ -15,7 +15,7 @@ ALL_PARAMS = [
     0x0001,  # Anlage
     0x0002,  # Lüfterstufe
     0x0006,  # Boost
-    0x0019,  # Feuchtesollwert
+    0x0019,  # Feuchtegenzwert
     0x0025,  # Feuchteistwert
     0x004A,  # Lüfterstufe Ventilator 1
     0x004B,  # Lüfterstufe Ventilator 2
@@ -149,13 +149,15 @@ class VentoExpertCoordinator(DataUpdateCoordinator):
 
 
 # ---------------------------------------------------------
-# Basis-Sensor-Klasse
+# Basis-Sensor-Klasse mit unique_id inkl. Instanzname
 # ---------------------------------------------------------
 class VentoExpertBaseSensor(SensorEntity):
-    def __init__(self, name, coordinator, param):
+    def __init__(self, name, coordinator, param, instance_name):
         self._attr_name = name
         self.coordinator = coordinator
         self.param = param
+        # unique_id: <instanzname>_<device_id>_<param>
+        self._attr_unique_id = f"{instance_name}_{coordinator.device_id}_{param:04X}"
 
     async def async_added_to_hass(self):
         self.async_on_remove(
@@ -179,7 +181,6 @@ class VentoExpertBaseSensor(SensorEntity):
 # ---------------------------------------------------------
 class VentoExpertPowerSensor(VentoExpertBaseSensor):
     _attr_icon = "mdi:power"
-    # Kein state_class, kein unit (Textwert)
 
     def _format_value(self, raw):
         mapping = {0: "Aus", 1: "Ein", 2: "Invertieren"}
@@ -188,7 +189,6 @@ class VentoExpertPowerSensor(VentoExpertBaseSensor):
 
 class VentoExpertModeSensor(VentoExpertBaseSensor):
     _attr_icon = "mdi:cog"
-    # Kein state_class, kein unit (Textwert)
 
     def _format_value(self, raw):
         mapping = {0: "Lüftung", 1: "Wärmerückgewinnung", 2: "Zuluft"}
@@ -246,14 +246,34 @@ async def async_setup_entry(
 
     await coordinator.async_config_entry_first_refresh()
 
+    # Instanzname aus der Config, Unterstriche durch Leerzeichen ersetzen
+    instance_name = entry.title.replace("_", " ")  # z. B. "ventoexpert bad"
+
     sensors = [
-        VentoExpertPowerSensor("VentoExpert Betrieb", coordinator, 0x0001),
-        VentoExpertStageSensor("VentoExpert Lüftungsstufe", coordinator, 0x0002),
-        VentoExpertBoostSensor("VentoExpert Boost", coordinator, 0x0006),
-        VentoExpertModeSensor("VentoExpert Betriebsart", coordinator, 0x00B7),
-        VentoExpertHumiditySensor("VentoExpert Feuchte Sollwert", coordinator, 0x0019),
-        VentoExpertHumiditySensor("VentoExpert Feuchte Istwert", coordinator, 0x0025),
-        VentoExpertFanSensor("VentoExpert Ventilator 1", coordinator, 0x004A),
-        VentoExpertFanSensor("VentoExpert Ventilator 2", coordinator, 0x004B),
+        VentoExpertPowerSensor(
+            f"{instance_name} Betrieb", coordinator, 0x0001, instance_name
+        ),
+        VentoExpertStageSensor(
+            f"{instance_name} Lüftungsstufe", coordinator, 0x0002, instance_name
+        ),
+        VentoExpertBoostSensor(
+            f"{instance_name} Boost", coordinator, 0x0006, instance_name
+        ),
+        VentoExpertModeSensor(
+            f"{instance_name} Betriebsart", coordinator, 0x00B7, instance_name
+        ),
+        VentoExpertHumiditySensor(
+            f"{instance_name} Feuchte Grenzwert", coordinator, 0x0019, instance_name
+        ),
+        VentoExpertHumiditySensor(
+            f"{instance_name} Feuchte Istwert", coordinator, 0x0025, instance_name
+        ),
+        VentoExpertFanSensor(
+            f"{instance_name} Ventilator 1", coordinator, 0x004A, instance_name
+        ),
+        VentoExpertFanSensor(
+            f"{instance_name} Ventilator 2", coordinator, 0x004B, instance_name
+        ),
     ]
+
     async_add_entities(sensors)
